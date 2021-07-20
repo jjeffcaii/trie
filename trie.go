@@ -7,4 +7,5 @@ type Trier interface {
 	Delete(key string) bool
 	Walk(walker WalkFunc) error
 	WalkPath(key string, walker WalkFunc) error
+	Search(prefix string, walker WalkFunc) error
 }

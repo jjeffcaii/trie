@@ -7,6 +7,27 @@ import (
 
 // RuneTrie
 
+func TestPathTrie_Search(t *testing.T) {
+	pt := NewPathTrie()
+	pt.Put("/users", 0)
+	pt.Put("/users/1", 1)
+	pt.Put("/users/1/orders/a", 2)
+	pt.Put("/users/2", 3)
+	pt.Put("/users/2/orders/b", 4)
+
+	walker := func(key string, value interface{}) error {
+		t.Log(key, "=", value)
+		return nil
+	}
+
+	pt.Search("", walker)
+	t.Log("=------")
+
+	pt.Search("/users", walker)
+	t.Log("=------")
+	pt.Search("/users/1", walker)
+}
+
 func TestRuneTrie(t *testing.T) {
 	trie := NewRuneTrie()
 	testTrie(t, trie)

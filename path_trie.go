@@ -1,6 +1,8 @@
 package trie
 
-// PathTrie is a trie of paths with string keys and interface{} values.
+import "strings"
+
+var _ Trier = (*PathTrie)(nil)
 
 // PathTrie is a trie of string keys and interface{} values. Internal nodes
 // have nil values so stored nil values cannot be distinguished and are
@@ -154,6 +156,39 @@ func (trie *PathTrie) WalkPath(key string, walker WalkFunc) error {
 		}
 		if i == -1 {
 			break
+		}
+	}
+	return nil
+}
+
+func (trie *PathTrie) Search(prefix string, walker WalkFunc) error {
+	if prefix == "" {
+		return trie.visitChildren("", walker)
+	}
+	for part, i := trie.segmenter(prefix, 0); ; part, i = trie.segmenter(prefix, i) {
+		if trie = trie.children[part]; trie == nil {
+			return nil
+		}
+		if i == -1 {
+			break
+		}
+	}
+	return trie.visitChildren(prefix, walker)
+}
+
+func (trie *PathTrie) visitChildren(path string, walker WalkFunc) error {
+	if trie.value != nil {
+		if err := walker(path, trie.value); err != nil {
+			return err
+		}
+	}
+
+	for k, v := range trie.children {
+		var sb strings.Builder
+		sb.WriteString(path)
+		sb.WriteString(k)
+		if err := v.visitChildren(sb.String(), walker); err != nil {
+			return err
 		}
 	}
 	return nil

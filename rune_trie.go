@@ -1,5 +1,7 @@
 package trie
 
+var _ Trier = (*RuneTrie)(nil)
+
 // RuneTrie is a trie of runes with string keys and interface{} values.
 // Note that internal nodes have nil values so a stored nil value will not
 // be distinguishable and will not be included in Walks.
@@ -118,6 +120,10 @@ func (trie *RuneTrie) WalkPath(key string, walker WalkFunc) error {
 		}
 	}
 	return nil
+}
+
+func (trie *RuneTrie) Search(prefix string, walker WalkFunc) error {
+	panic("implement me")
 }
 
 // RuneTrie node and the rune key of the child the path descends into.
